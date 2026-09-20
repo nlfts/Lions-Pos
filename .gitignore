@@ -1,74 +1,58 @@
-### Maven ###
+# Rust & Cargo
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-.github/_pull/*
+/target
+Cargo.lock
+
+# SQLite Database Files (JANGAN di-push ke git)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+/data/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
 
 # Windows reserved device name artifact
 nul
 src-trash
 
-### STS ###
-.apt_generatedrd
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.turbo/
+frontend/package-lock.json
 
-### IntelliJ IDEA ###
+# Uploads
+uploads/**
+!uploads/
+!uploads/avatar/
+!uploads/products/
+!uploads/avatar/.gitkeep
+!uploads/products/.gitkeep
+
+# IDEs
 .idea
 *.iws
 *.iml
 *.ipr
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
 .vscode/
+.settings
+.project
+.classpath
 
-### LOGS ###
+# Logs
 /logs/
+*.log
 
-### Frontend (pnpm) ###
-frontend/node_modules/
-frontend/package-lock.json
-src/main/resources/static/
-!src/main/resources/static/scalar-ui
-
-# application.properties
-src/main/resources/application.properties
-
-# summary
-/summary
-/davin
-
-
-# Ignore semua isi uploads
-uploads/**
-
-# Tapi tetap izinkan foldernya
-!uploads/
-!uploads/avatar/
-!uploads/products/
-
-# Simpan placeholder supaya folder ikut ke git
-!uploads/avatar/.gitkeep
-!uploads/products/.gitkeep
-
-# Added by cargo
-
-/target
+# Legacy Java / Maven artifacts
+.mvn/
+.apt_generatedrd
+.factorypath
+.springBeans
+.sts4-cache
+bin/

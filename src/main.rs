@@ -1,24 +1,37 @@
-use axum::{
-    routing::get,
-    Router,
+use lions_pos::{
+    config::AppConfig,
+    database::init_db,
+    routes::create_router,
+    state::AppState,
 };
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
-async fn main() {
-    let app = Router::new()
-        .route("/api/health", get(health));
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| "lions_pos=debug,tower_http=debug,axum=trace".into()),
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .init();
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
-        .await
-        .unwrap();
+    let config = AppConfig::from_env();
+    tracing::info!("Initializing Lions POS backend on port {}", config.port);
 
-    println!("Lion POS API running at http://127.0.0.1:3000");
+    // Initialize database & tables & seed
+    let pool = init_db(&config.database_url).await?;
+    let state = AppState::new(pool, config.clone());
 
-    axum::serve(listener, app)
-        .await
-        .unwrap();
-}
+    let app = create_router(state);
 
-async fn health() -> &'static str {
-    "Lion POS API is healthy"
+    let bind_addr = format!("{}:{}", config.host, config.port);
+    let listener = tokio::net::TcpListener::bind(&bind_addr).await?;
+
+    tracing::info!("🦁 Lion POS API running at http://{}", bind_addr);
+    println!("🦁 Lion POS API is live at http://127.0.0.1:{}", config.port);
+
+    axum::serve(listener, app).await?;
+
+    Ok(())
 }

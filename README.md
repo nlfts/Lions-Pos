@@ -1,305 +1,124 @@
-[![Lions](/docs/amazing.png)](https://Lions.dev)
+# 🦁 Lions POS — High-Performance Point of Sales System
 
-# Lions — Sistem Manajemen Bisnis
+[![Rust](https://img.shields.io/badge/Rust-2024%20edition-DEA584?style=flat&logo=rust)](https://www.rust-lang.org/)
+[![Axum](https://img.shields.io/badge/Axum-0.8-blue?style=flat)](https://github.com/tokio-rs/axum)
+[![SQLite](https://img.shields.io/badge/SQLite-WAL%20Mode-003B57?style=flat&logo=sqlite)](https://sqlite.org/)
+[![Vue.js](https://img.shields.io/badge/Vue.js-3.x-42b883?style=flat&logo=vuedotjs)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-8.x-646cff?style=flat&logo=vite)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-38bdf8?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
 
-<p>
-  <a href="./LICENSE"><img src="https://img.shields.io/github/license/your-org/Lions?style=flat" alt="Lisensi"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Java-21-orange?style=flat" alt="Java 21"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Spring%20Boot-3.4.5-6DB33F?style=flat" alt="Spring Boot 3.4.5"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Vue.js-3.x-42b883?style=flat" alt="Vue 3"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Vite-8.x-646cff?style=flat" alt="Vite"></a>
-  <a href="#"><img src="https://img.shields.io/badge/PostgreSQL-ready-336791?style=flat" alt="PostgreSQL"></a>
-</p>
-
-**Lions** adalah platform manajemen bisnis berbasis web yang menggabungkan backend Spring Boot dengan frontend Vue.js. Sistem ini mencakup manajemen penjualan (kasir/POS), inventaris gudang, pengadaan barang, manajemen pengguna dengan kontrol akses berbasis peran, serta berbagai laporan operasional.
-
-<p align="center">
-  <a href="https://ko-fi.com/nlfts">
-    <img src="https://storage.ko-fi.com/cdn/kofi3.png?v=6" alt="Buy me a coffee at ko-fi.com" height="40">
-  </a>
-</p>
+**Lions POS** adalah sistem *Point of Sales* modern dan berkinerja tinggi yang dibangun menggunakan **Rust (Axum + SQLx + SQLite + JWT)** pada backend dan **Vue 3 (Composition API + Tailwind CSS + Pinia)** pada frontend.
 
 ---
 
-## Daftar Isi
+## ⚡ Fitur Utama (Phase 1 MVP)
 
-- [Fitur Utama](#fitur-utama)
-- [Tech Stack](#tech-stack)
-- [Struktur Proyek](#struktur-proyek)
-- [Prasyarat](#prasyarat)
-- [Memulai Pengembangan](#memulai-pengembangan)
-- [Konfigurasi Environment](#konfigurasi-environment)
-- [Perintah Maven](#perintah-maven)
-- [Build Production](#build-production)
-- [Dokumentasi API](#dokumentasi-api)
-- [Kontribusi](#kontribusi)
-- [Lisensi](#lisensi)
-
----
-
-## Fitur Utama
-
-### Kasir & Penjualan
-- Antarmuka kasir (POS) dengan manajemen shift
-- Pemrosesan pesanan dan item pesanan
-- Pembayaran dan cetak struk
-- Voucher diskon
-
-### Manajemen Inventaris
-- Manajemen gudang dan cabang
-- Saldo stok dan mutasi stok
-- Stock opname (perhitungan fisik stok)
-- Transfer stok antar gudang/cabang
-
-### Pengadaan (Procurement)
-- Manajemen supplier
-- Purchase order dan penerimaan barang
-
-### Katalog Produk
-- Manajemen produk dan kategori
-- Upload foto produk
-
-### Otentikasi & Otorisasi
-- Login berbasis JWT
-- Manajemen pengguna, peran (role), dan izin (permission)
-- Kontrol akses berbasis modul
-- Cache permission dengan Caffeine
-
-### Sistem
-- Log HTTP request
-- Notifikasi
-- Seeder data awal (user, permission, role template)
+- **Kasir / POS Checkout**:
+  - Transaksi penjualan kasir dalam *Atomic Database Transaction*.
+  - Dukungan metode pembayaran Tunai (`CASH`), Transfer (`TRANSFER`), `QRIS`, dan **Split Payment**.
+  - Validasi stok produk otomatis dan pencatatan mutasi stok real-time.
+  - Perhitungan diskon item, diskon manual, dan voucher promosi.
+  - Cetak struk kasir & ringkasan transaksi.
+- **Manajemen Shift Kasir**:
+  - Buka shift kasir dengan modal awal (*starting cash*).
+  - Tutup shift kasir dengan kalkulasi otomatis selisih kas fisik vs sistem.
+- **Katalog & Inventory**:
+  - Manajemen produk, kategori, SKU, barcode, dan foto produk.
+  - Pelacakan stok multi-cabang & riwayat mutasi stok.
+- **Autentikasi & Hak Akses (RBAC)**:
+  - Otentikasi berbasis JWT (Access Token & Refresh Token).
+  - Kontrol akses berbasis peran (*Roles & Permissions*).
+- **Developer CLI Runner (`lion`)**:
+  - Menjalankan backend Rust dan frontend Vue secara bersamaan dalam 1 terminal dengan output log berwarna yang rapi.
 
 ---
 
-## Tech Stack
+## 🚀 Memulai Cepat (Quick Start)
 
-### Backend
-| Teknologi | Versi |
-|---|---|
-| Java | 21 |
-| Spring Boot | 3.4.5 |
-| Spring Security + JWT (jjwt) | 0.12.6 |
-| Spring Data JPA | (managed by Boot) |
-| PostgreSQL Driver | (managed by Boot) |
-| Springdoc OpenAPI (Swagger UI) | 2.8.8 |
-| Caffeine Cache | (managed by Boot) |
-| Lombok | 1.18.38 |
-| Thymeleaf | (managed by Boot) |
+### 1. Prasyarat
+- [Rust](https://rustup.rs/) (versi terbaru)
+- [Node.js](https://nodejs.org/) (v18+) & [pnpm](https://pnpm.io/) (atau `npm`)
 
-### Frontend
-| Teknologi | Versi |
-|---|---|
-| Vue.js | 3.x |
-| Vite + vite-ssg | 8.x |
-| Vue Router | 5.x |
-| Pinia | 3.x |
-| Tailwind CSS | 3.x |
-| Reka UI / Radix Vue | latest |
-| Axios | 1.x |
-| Chart.js + vue-chartjs | 4.x |
-| GSAP + Lenis | latest |
-| jsPDF + jspdf-autotable | latest |
-| Iconify Vue | 5.x |
-
-### Tooling
-| Alat | Keterangan |
-|---|---|
-| Maven Wrapper (`./mvnw`) | Build & lifecycle management backend |
-| pnpm | Package manager frontend |
-| VitePress | Dokumentasi frontend |
-
----
-
-## Struktur Proyek
-
-```text
-Lions/
-├── src/
-│   ├── main/
-│   │   ├── java/com/fts/twin/
-│   │   │   ├── config/          # Konfigurasi Spring (Security, Cache, Swagger, dll.)
-│   │   │   ├── controller/      # REST API controllers (auth, catalog, inventory, order, procurement, system)
-│   │   │   ├── dto/             # Data Transfer Objects (request & response)
-│   │   │   ├── handler/         # Exception handler & custom auth entry point
-│   │   │   ├── middleware/       # JWT filter, HTTP log filter, user context filter
-│   │   │   ├── model/           # Entity JPA (auth, catalog, inventory, order, procurement, system)
-│   │   │   ├── repository/      # Spring Data JPA repositories
-│   │   │   ├── seeder/          # Data seeder awal (user, permission, role)
-│   │   │   ├── service/         # Business logic layer
-│   │   │   └── util/            # Utility (JWT, response builder, security utils, dll.)
-│   │   └── resources/
-│   │       ├── static/          # Output build frontend (di-generate otomatis)
-│   │       └── logback.xml      # Konfigurasi logging
-│   └── test/
-├── frontend/
-│   ├── src/
-│   │   ├── components/          # Komponen UI (dashboard, section, shadcn-style)
-│   │   ├── composables/         # Composable reusable (confirm, toast, permission, dll.)
-│   │   ├── hooks/               # Custom hooks (GSAP)
-│   │   ├── lib/                 # Utilitas (api client, appMode, mock, gsap, lenis)
-│   │   ├── pages/               # Halaman aplikasi (kasir, produk, inventaris, laporan, dll.)
-│   │   ├── router/              # Konfigurasi Vue Router
-│   │   └── stores/              # Pinia stores (auth, theme, toast, confirm)
-│   ├── docs/                    # Dokumentasi frontend (VitePress)
-│   ├── public/                  # Aset statis publik
-│   ├── vite.config.js
-│   ├── tailwind.config.js
-│   └── package.json
-├── api/
-│   └── docs/                    # Dokumentasi OpenAPI (JSON) per modul
-├── uploads/
-│   ├── avatar/                  # Upload foto profil pengguna
-│   └── products/                # Upload foto produk
-├── pom.xml                      # Konfigurasi Maven (backend + build frontend)
-├── mvnw / mvnw.cmd              # Maven Wrapper
-└── spravel / spravel.bat        # Script utilitas (Windows & Unix)
-```
-
----
-
-## Prasyarat
-
-Pastikan alat berikut sudah terpasang sebelum memulai:
-
-- **Java 21** atau lebih baru
-- **Maven** (atau gunakan `./mvnw` yang sudah tersedia)
-- **Node.js** (direkomendasikan versi LTS terbaru)
-- **pnpm** — `npm install -g pnpm`
-- **PostgreSQL** — database yang sedang berjalan
-
----
-
-## Memulai Pengembangan
-
-### 1. Clone repositori
-
-```bash
-git clone https://github.com/your-org/Lions.git
-cd Lions
-```
-
-### 2. Konfigurasi database
-
-Buat database PostgreSQL dan sesuaikan konfigurasi di `src/main/resources/application.properties` (atau `application.yml`):
-
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/Lions
-spring.datasource.username=postgres
-spring.datasource.password=yourpassword
-```
-
-### 3. Jalankan backend
-
-```bash
-./mvnw spring-boot:run
-```
-
-Backend akan berjalan di:
-
-```
-http://localhost:8090
-```
-
-### 4. Jalankan frontend (mode development)
-
+### 2. Instalasi Frontend Dependencies
 ```bash
 cd frontend
 pnpm install
-pnpm dev
+cd ..
 ```
 
-Frontend dev server akan berjalan di:
-
-```
-http://localhost:5173
-```
-
-> **Catatan:** Secara default frontend menggunakan `VITE_APP_MODE=mock`, sehingga bisa berjalan tanpa backend aktif. Ubah ke `api` untuk terhubung ke backend nyata.
-
----
-
-## Konfigurasi Environment
-
-Salin file contoh dan sesuaikan:
+### 3. Menjalankan Server Development dengan `lion` CLI
+Gunakan binary CLI `lion` untuk menjalankan Rust backend dan Vue frontend secara bersamaan:
 
 ```bash
-cp frontend/.env.example frontend/.env.local
+# Menjalankan Backend + Frontend sekaligus
+cargo run --bin lion -- dev
+
+# Atau jika ingin menjalankan secara terpisah:
+cargo run --bin lion -- backend    # Hanya backend Rust (Port 8090)
+cargo run --bin lion -- frontend   # Hanya frontend Vue (Port 5173)
 ```
 
-| Variabel | Default | Keterangan |
-|---|---|---|
-| `VITE_API_URL` | `http://localhost:8090` | URL backend API |
-| `VITE_DEV_PORT` | `5173` | Port dev server Vite |
-| `VITE_APP_TITLE` | `Lions` | Judul aplikasi di browser |
-| `VITE_APP_MODE` | `mock` | Mode data: `api`, `mock`, atau `empty` |
+> **Opsional**: Anda bisa meng-install CLI `lion` secara global ke Cargo bin path dengan:
+> ```bash
+> cargo install --path . --bin lion
+> # Setelah itu bisa langsung menjalankan:
+> lion dev
+> ```
 
 ---
 
-## Perintah Maven
+## 🔑 Akun Login Default
 
-Proyek ini menggunakan profil Maven kustom sebagai shortcut:
+Database SQLite (`lions_pos.db`) dibuat dan di-seed secara otomatis pada startup pertama kali:
 
-| Perintah | Keterangan |
+| Field | Nilai Default |
 |---|---|
-| `./mvnw spring-boot:run` | Jalankan backend (development) |
-| `./mvnw package` | Build JAR (termasuk build frontend) |
-| `./mvnw package -P skip-frontend` | Build JAR tanpa build frontend |
-| `./mvnw test` | Jalankan unit test backend |
-| `./mvnw clean` | Bersihkan hasil build |
+| **URL Web** | `http://localhost:5173` |
+| **URL API** | `http://127.0.0.1:8090` |
+| **Username** | `admin` |
+| **Password** | `password123` |
+| **Role** | `ADMIN` (Akses Penuh) |
 
 ---
 
-## Build Production
+## 🏗️ Struktur Proyek
 
-Build lengkap (frontend + backend dalam satu JAR):
+```text
+Lions-Pos/
+├── Cargo.toml                  # Konfigurasi workspace Rust & dependencies
+├── src/
+│   ├── main.rs                 # Server entrypoint (lions-pos)
+│   ├── lib.rs                  # Rust library root
+│   ├── bin/
+│   │   └── lion.rs             # CLI Runner (lion dev, lion test, dll.)
+│   ├── config/                 # Konfigurasi aplikasi & environment
+│   ├── database/               # Koneksi database SQLx & seeder otomatis
+│   ├── errors/                 # Unified error response handler
+│   ├── handlers/               # Handler HTTP endpoint Axum
+│   ├── middleware/             # Middleware JWT Authentication
+│   ├── models/                 # Struct entity, request, & response DTOs
+│   ├── routes/                 # Routing API & CORS
+│   └── state/                  # Shared application state
+├── tests/
+│   └── pos_integration_test.rs # Pengujian integrasi otomatis
+├── frontend/                   # Frontend Vue 3 + Vite
+│   ├── src/pages/              # Halaman Kasir, Produk, Cabang, Shift, dll.
+│   └── vite.config.js          # Proxy Vite ke backend port 8090
+└── src-trash/                  # Arsip kode Java Spring Boot lama (referensi)
+```
 
+---
+
+## 🧪 Menjalankan Pengujian (Testing)
+
+Jalankan integration test suite dengan perintah:
 ```bash
-./mvnw package
+cargo test
+# atau via CLI lion
+cargo run --bin lion -- test
 ```
-
-Jalankan JAR hasil build:
-
-```bash
-java -jar target/spravel-0.0.1-SNAPSHOT.jar
-```
-
-Aplikasi akan tersedia di `http://localhost:8090`.
 
 ---
 
-## Dokumentasi API
-
-Swagger UI tersedia saat aplikasi berjalan:
-
-```
-http://localhost:8090/swagger-ui.html
-```
-
-Dokumentasi OpenAPI per modul (format JSON) tersedia di folder `api/docs/`:
-
-- `api/docs/auth.json`
-- `api/docs/products.json`
-- `api/docs/suppliers.json`
-- `api/docs/warehouses.json`
-- `api/docs/purchase-orders.json`
-
----
-
-## Kontribusi
-
-Kontribusi sangat disambut. Silakan baca [CONTRIBUTING.md](CONTRIBUTING.md) untuk panduan lengkapnya.
-
-Langkah singkat:
-
-1. Fork repositori ini
-2. Buat branch fitur: `git checkout -b fitur/nama-fitur`
-3. Commit perubahan: `git commit -m "feat: tambah fitur X"`
-4. Push ke branch: `git push origin fitur/nama-fitur`
-5. Buka Pull Request
-
----
-
-## Lisensi
-
-Dirilis di bawah lisensi [GNU AFFERO GENERAL PUBLIC](LICENSE).
+## 📄 Lisensi
+Didistribusikan di bawah lisensi MIT. Lihat `LICENSE` untuk informasi lebih lanjut.
